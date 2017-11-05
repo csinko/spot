@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, Button } from 'react-native';
 import { Container, Header, Content, Card, CardItem, Body, Text, Thumbnail, Left, Right } from 'native-base';
 import { EventEmitter } from 'fbemitter';
 
@@ -14,11 +14,14 @@ export default class App extends React.Component {
   constructor(){
     super();
     this.getWeather=this.getWeather.bind(this);
+    this.buttonRefresh=this.buttonRefresh.bind(this);
     this.state = {
         events: new Array()
     }
   }
-
+  buttonRefresh(){
+    console.log('refreshed');
+  }
     componentDidMount() {
         emitter.addListener('event', evt => {
                 this.setState({
@@ -54,7 +57,7 @@ export default class App extends React.Component {
 
       getWeather(events) {
           console.log("Getting Weather");
-        
+
           events.map(function(evt) {
               address = evt.location.replace(/ /g, '');
               const API_KEY = "AIzaSyA-AfLMIf-k0l4IEmktj4Egjz74AN-gQ2I";
@@ -83,7 +86,7 @@ export default class App extends React.Component {
                           evt.high = dayWeather.Temperature.Maximum.Value;
                           evt.low = dayWeather.Temperature.Minimum.Value;
                           emitter.emit('event', evt);
-                          
+
                       })
                     .catch((error) => {
                         console.error(error);
@@ -96,19 +99,19 @@ export default class App extends React.Component {
               .catch((error) => {
                   console.error(error);
               });
-            
+
           });
       }
 
   render() {
       console.log(this.state.events);
-    
+
     return (
         <Container style={{backgroundColor: 'black'}}>
             <Content>
-                <Header style={{backgroundColor: 'white', marginTop: 24}}>
+                <Header style={{backgroundColor: 'green', marginTop: 24}}>
                     <Left>
-                        <Thumbnail source={require('./assets/logothree.png')} />
+                        <Thumbnail source={require('./assets/logofour.png')} />
                         <Body>
                             <Text style={styles.bodyBigBlack}>Spot</Text>
                         </Body>
@@ -120,6 +123,11 @@ export default class App extends React.Component {
                 <ScrollView>
                     {this.state.events.map((x) => <Weatherone name={x.name} location={x.location} date={x.date} weather={x.weather} high={x.high} low={x.low} details={x.description} />)}
                 </ScrollView>
+                <Button
+                  onPress={this.buttonRefresh()}
+                  title= 'Refresh'
+                  color = 'blue'
+                />
             </Content>
         </Container>
     );
