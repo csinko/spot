@@ -14,14 +14,18 @@ export default class App extends React.Component {
   constructor(){
     super();
     this.getWeather=this.getWeather.bind(this);
-    this.buttonRefresh=this.buttonRefresh.bind(this);
+   // this.buttonRefresh=this.buttonRefresh.bind(this);
     this.state = {
         events: new Array()
     }
   }
-  buttonRefresh(){
-    console.log('refreshed');
-  }
+ // buttonRefresh(){
+ //  //   this.setState({
+ //  //       events: []
+ //  //   });
+
+ //     //this.getCalendar();
+ // }
     componentDidMount() {
         emitter.addListener('event', evt => {
                 this.setState({
@@ -32,7 +36,8 @@ export default class App extends React.Component {
         emitter.addListener('calendar', evts => {
             this.getWeather(evts);
         });
-
+        
+        console.log("Getting Calendar");
         this.getCalendar();
 
     }
@@ -60,7 +65,7 @@ export default class App extends React.Component {
 
           events.map(function(evt) {
               address = evt.location.replace(/ /g, '');
-              const API_KEY = "AIzaSyA-AfLMIf-k0l4IEmktj4Egjz74AN-gQ2I";
+              const API_KEY = "AIzaSyDg2B2WDtBtJb3yJAxlDhF1dnVJzBwERfk";
               fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+ address + '&key=' + API_KEY)
               .then((response) => response.json())
               .then((responseJson) => {
@@ -123,11 +128,6 @@ export default class App extends React.Component {
                 <ScrollView>
                     {this.state.events.map((x) => <Weatherone name={x.name} location={x.location} date={x.date} weather={x.weather} high={x.high} low={x.low} details={x.description} />)}
                 </ScrollView>
-                <Button
-                  onPress={this.buttonRefresh()}
-                  title= 'Refresh'
-                  color = 'blue'
-                />
             </Content>
         </Container>
     );
