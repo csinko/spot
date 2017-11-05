@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Button } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import { Container, Header, Content, Card, CardItem, Body, Text, Thumbnail, Left, Right } from 'native-base';
 import { EventEmitter } from 'fbemitter';
 
@@ -14,18 +14,10 @@ export default class App extends React.Component {
   constructor(){
     super();
     this.getWeather=this.getWeather.bind(this);
-   // this.buttonRefresh=this.buttonRefresh.bind(this);
     this.state = {
         events: new Array()
     }
   }
- // buttonRefresh(){
- //  //   this.setState({
- //  //       events: []
- //  //   });
-
- //     //this.getCalendar();
- // }
     componentDidMount() {
         emitter.addListener('event', evt => {
                 this.setState({
@@ -74,7 +66,7 @@ export default class App extends React.Component {
                         console.log(addr.long_name);
                       addr.types.map(function(type) {
                           if (type === "postal_code") {
-                             zipCode = addr.long_name; 
+                             zipCode = addr.long_name;
                           }
                       });
                   });
@@ -112,9 +104,9 @@ export default class App extends React.Component {
       console.log(this.state.events);
 
     return (
-        <Container style={{backgroundColor: 'black'}}>
+        <Container style={{backgroundColor: 'dimgray'}}>
             <Content>
-                <Header style={{backgroundColor: 'green', marginTop: 24}}>
+                <Header style={{backgroundColor: 'palegreen', marginTop: 24}}>
                     <Left>
                         <Thumbnail source={require('./assets/logofour.png')} />
                         <Body>
@@ -151,11 +143,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   bodyBlue:{
-    color: 'blue',
+    color: 'cyan',
     fontSize: 18,
   },
   bodyRed:{
-    color: 'red',
+    color: 'crimson',
     fontSize: 18,
   }
 });
