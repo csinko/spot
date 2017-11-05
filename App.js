@@ -1,6 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import { Container, Header, Content, Card, CardItem, Body, Text, Thumbnail, Left, Right } from 'native-base';
 import { EventEmitter } from 'fbemitter';
+
+import { Weatherone } from './components/Weathercards';
 
 const API_Key = "HackPSU2017";
 
@@ -22,13 +25,30 @@ export default class App extends React.Component {
                     events: [].concat(evt)
                 });
             });
-        this.getWeather([{
-            name: "Event 1",
-            date: "2017-11-07T15:00:00-05:00",
-            description: "My Event",
-            location: "293 E Exchange St, Akron, OH 44304, USA"
-        }]);
 
+        emitter.addListener('calendar', evts => {
+            this.getWeather(evts);
+        });
+
+        this.getCalendar();
+
+    }
+
+    getCalendar() {
+        fetch('https://www.googleapis.com/calendar/v3/calendars/tsm4vq1o9a43okt4nspiht7s5g@group.calendar.google.com/events?key=AIzaSyDg2B2WDtBtJb3yJAxlDhF1dnVJzBwERfk')
+        .then((response) => response.json())
+        .then((responseJson) => {
+            let events = new Array();
+            responseJson.items.map(function(evt) {
+                events.push({
+                    location: evt.location,
+                    date:   evt.start.dateTime,
+                    name:   evt.summary,
+                    description: evt.description
+                });
+            });
+            emitter.emit('calendar', events);
+        })
     }
 
 
@@ -42,7 +62,6 @@ export default class App extends React.Component {
               .then((response) => response.json())
               .then((responseJson) => {
                   let zipCode = responseJson.results[0].address_components[7].long_name; 
-                  console.log(zipCode);
                   fetch('http://dataservice.accuweather.com/locations/v1/postalcodes/search?apikey=HackPSU2017&q=' + zipCode)
                   .then((response2) => response2.json())
                   .then((responseJson2) => {
@@ -50,7 +69,6 @@ export default class App extends React.Component {
                       fetch('http://dataservice.accuweather.com/forecasts/v1/daily/15day/' + cityKey + '?apikey=HackPSU2017')
                       .then((response3) => response3.json())
                       .then((responseJson3) => {
-                          console.log(responseJson3);
                           let dayWeather = responseJson3.DailyForecasts[0];
                           evt.weather = dayWeather.Day.IconPhrase;
                           evt.high = dayWeather.Temperature.Maximum.Value;
@@ -77,18 +95,50 @@ export default class App extends React.Component {
       console.log(this.state.events);
     
     return (
-      <View style={styles.container}>
-      </View>
-
+        <Container style={{backgroundColor: 'black'}}>
+            <Content>
+                <Header style={{backgroundColor: 'white', marginTop: 24}}>
+                    <Left>
+                        <Thumbnail source={require('./assets/logothree.png')} />
+                        <Body>
+                            <Text style={styles.bodyBigBlack}>Spot</Text>
+                        </Body>
+                    </Left>
+                    <Right>
+                        <Text style={styles.bodyBigBlack}>Spot</Text>
+                    </Right>
+                </Header>
+                <ScrollView>
+                    {this.state.events.map((x) => <Weatherone name={x.name} location={x.location} date={x.date} weather={x.weather} high={x.high} low={x.low} details={x.description} />)}
+                </ScrollView>
+            </Content>
+        </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  headerWhite: {
+    padding:0,
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize :30,
   },
+  bodyBigBlack:{
+    color: 'black',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  bodyBlack:{
+    color: 'black',
+    fontSize: 18,
+  },
+  bodyBlue:{
+    color: 'blue',
+    fontSize: 18,
+  },
+  bodyRed:{
+    color: 'red',
+    fontSize: 18,
+  }
 });
