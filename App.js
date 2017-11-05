@@ -25,7 +25,7 @@ export default class App extends React.Component {
     componentDidMount() {
         emitter.addListener('event', evt => {
                 this.setState({
-                    events: [].concat(evt)
+                    events: this.state.events.concat(evt)
                 });
             });
 
@@ -64,7 +64,16 @@ export default class App extends React.Component {
               fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+ address + '&key=' + API_KEY)
               .then((response) => response.json())
               .then((responseJson) => {
-                  let zipCode = responseJson.results[0].address_components[7].long_name;
+                  var zipCode;
+                  responseJson.results[0].address_components.map(function(addr) {
+                        console.log(addr.long_name);
+                      addr.types.map(function(type) {
+                          if (type === "postal_code") {
+                             zipCode = addr.long_name; 
+                          }
+                      });
+                  });
+                  console.log(zipCode);
                   fetch('http://dataservice.accuweather.com/locations/v1/postalcodes/search?apikey=HackPSU2017&q=' + zipCode)
                   .then((response2) => response2.json())
                   .then((responseJson2) => {
