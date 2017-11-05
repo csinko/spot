@@ -67,11 +67,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   bodyBlue:{
-    color: 'blue',
+    color: 'cyan',
     fontSize: 18,
   },
   bodyRed:{
-    color: 'red',
+    color: 'crimson',
     fontSize: 18,
   }
 });
